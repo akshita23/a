@@ -1,0 +1,38 @@
+CoDR OBDH-
+Obdh is central unit, takes input from other subsystem processes it in real time
+It has two portions-
+HARDWARE-
+Processing element-alu,cu
+Pheripheral-input,output
+Memory-flash
+Bus- we are using i2c for all other subsystems and spi for payload because here in payload obdh interfacing  through bus  obdh becomes slave and payload master.
+Hardware has architecture- haward type where two separate buses are there for instruction and data memory.
+BUS-
+I2c (half duplex)two wired multi mastered there are scl for synchronization and sda for data transmission
+In i2c  sending and receiving of data is not possible at same time
+ I2c is sending one extra bit informs tells master wheter to read or write in Lsb
+ I2c  is  preferred over spi  four wired,(full duplex) for many subsystems because i2c requires less no. of pins and multiple connections are better implemented in i2c inspite of fact that speed of spi is fast.
+Spi has only single master and limited for short distance.
+The hardware components are selected on basis of temperature,power and space requirements.
+Microcontroller used for obdh is p24fj128gb110 (32 MHz)using risc architecture which is shared with adcs and ttc. We chose it because it has advantages over pic 16 like compatibility with c30 compiler,good multiplexing and division.
+One has to be cautious of bitflipp error(when change in bits occur) and latch up error (short circuiting of cmos component) .
+Memory used  is with proper memory management- 
+Used for storing payload images,housekepping data,flight plan.
+Our microcontroller has 16 KB ram for tempoprary ram(volatile memory) prone to latch up.
+Inbuilt prom(non-volatile memory) of 256 KB used for boot loading.
+External eeprom for storing codes of other subsystem which our microcontroller is using.
+There are 2 sd card  1 GB each used as flash – one for payload data and other for telemetry and housekeeping data.
+Hence data memory-flash(for payload data).
+Working memory- prom(volatile)(for stack maintainence).
+Flight software memomry- used for flight software (prom  used).
+SOFTWARE-	 
+.flight software development:
+As there are 2 basic satellite nodes-payload and subsytem nodes which through buses are interfaced with flight software.
+Flight software contains command manager the main module of the software which messages and sends receives data from and to payload and system managers which shares messages through shared resources through message queues, etc which can be generated through queues, binary semaphore –the queue with one element which all could be implemented through free rtos. The software also contains the thread manager responsible for on off, termination as they are developed as threads.
+ Os:  through which muli tasking can be done and since task done           within deadline then comes real time operating systems.
+Free rtos is used as rtos it is good as it is deterministic and good for semaphore and mutex.
+QUEUE-
+Through queue task to task communication occur.
+Semaphore and mutex serve as signalling and locking purpose.
+Software realibity comes under more and more testing,error detection and correction using hammer code and data compreesion for sufficiency of memory.
+

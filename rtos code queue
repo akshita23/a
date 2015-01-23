@@ -1,0 +1,35 @@
+#include<p24fj128ga110.h>
+#include<FreeRTOS.h>
+#include"task.h"
+#include"queue.h"
+static void task1(void *pvparameter);
+static void task2(void* pvparameter);
+xQueueHandle xQueue=NULL;
+int main()
+{xQueue=xQueueCreate(5,sizeof(int));
+xTaskCreate( vTaskCode, "NAME", 2000, NULL, 2,NULL);
+xTaskCreate( vTaskCode, "NAME2",2000, NULL, 1,NULL);
+vTaskStartScheduler();
+return 0;
+}
+static void task1(void*pvparameter)
+{
+    int item=0;
+    while(1)
+    {
+        if(xQueue!=0)
+        {
+            if(xQueueSend(xQueue,&item,5000))
+                printf("message sent");
+        }
+    }
+}
+static void task1(void*pvparameter)
+{
+    int item=0;
+        if(xQueue!=0)
+        {
+            if(xQueueReceive(&item,5000))
+                printf("message received");
+        }
+    }
